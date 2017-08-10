@@ -334,7 +334,7 @@ class PentagonProject():
         context = {
             'vpc_name': self._vpc_name,
             'infrastructure_bucket': self._infrastructure_bucket,
-            'aws_default_region': self._aws_default_region
+            'aws_region': self._aws_default_region
         }
         return self.__render_template(template_name, template_path, target, context)
 
