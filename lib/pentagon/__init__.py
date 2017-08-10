@@ -442,12 +442,8 @@ class PentagonProject():
 
                 logging.info("Getting VPN ami-id from AWS")
 
-                # Set EC2 environ vars for boto3 to use
-                os.environ['AWS_ACCESS_KEY'] = self._aws_access_key
-                os.environ['AWS_SECRET_KEY'] = self._aws_secret_key
-                os.environ['AWS_DEFAULT_REGION'] = self._aws_default_region
                 try:
-                    client = boto3.client('ec2')
+                    client = boto3.client('ec2', aws_access_key_id=self._aws_access_key,  aws_secret_access_key=self._aws_secret_key)
                     images = client.describe_images(Owners=self._ami_owners, Filters=self._vpn_ami_filters)
                     self._vpn_ami_id = images['Images'][-1]['ImageId']
                 except Exception, e:
