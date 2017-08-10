@@ -20,15 +20,8 @@ machine:
     REGISTRY_EMAIL: none
     REGISTRY_USERNAME: AWS
 
-    CI_SHA1: $CIRCLE_SHA1
-    CI_BRANCH: $CIRCLE_BRANCH
-    CI_BUILD_NUM: $CIRCLE_BUILD_NUM
-
     DOCKERTAG: pentagon
     SERVICENAME: pentagon
-
-    CLUSTER_NICKNAME_PRODUCTION: production-1.reactiveops.io
-    CLUSTER_NICKNAME_WORKING: working-1.reactiveops.io
 
   services:
     - docker
@@ -37,7 +30,6 @@ dependencies:
   pre:
     - pip install -r lib/tests/requirements.txt
     - pip install ./
-    - npm install
 
   override:
     - echo "overriding inferred dependencies"
