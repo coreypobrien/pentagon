@@ -13,8 +13,8 @@
   * May require the `python-dev` and `libffi-dev` packages on some linux distributions
   * Not necessary, but we suggest installing Pentagon into a [VirtualEnv](https://virtualenv.pypa.io/en/stable/)
 
-
-## Simple Project Initialization
+## Quick Start
+### Start Project
 * `pentagon start-project <project-name> --aws-access-key <aws-access-key> --aws-secret-key <aws-secret-key> --aws-default-region <aws-default-region>`
   * With the above basic options set, all defaults will be set for you and unless values need to be updated, you should be able to run terraform after creating the S3 Bucket to store state (`infrastructure-bucket`).
   * Arguments may also be set using environment variable in the format `PENTAGON_<argument_name_with_underscores>`.
@@ -24,15 +24,16 @@
   * sources environment variables required for the further steps. This wil be required each time you work with the infrastructure repository or if you move the repository to another location.
 * `bash config/local/config/init`
 
-
-## VPC Setup
+### VPC Setup
+This creates a VPC and private, public, and admin subnets in that VPC for non Kubernetes resources. [More](network.md)
 * `cd default/vpc`
 * Verify that `terraform.tfvars` has valid values
   * in some cases, the programatically determined AWS availablity zones may not exist
 * `make all`
-* More information about the [network](docs/network.md)
 
-## VPN Setup
+
+### VPN Setup
+This creates a AWS instance running [OpenVPN](https://openvpn.net/) [More](vpn.md) 
 * From the root of your project run `ansible-galaxy install -r ansible-requirements.yml`
 * `cd default/resources/admin-environment`
 * edit `env.yml` and update any values. 
@@ -40,7 +41,12 @@
 * edit `../../account/vars.yml` to make sure the values are corect
   * Cannonical zone must be a route53 zone you have access to create records in or the vpn creation will fail.
 * `ansible-playbook vpn.yml`
+  * Currently may need to be run twice due to a race condition
 
+
+
+
+======================================
 
 ## Advanced Project Initialization
 
