@@ -1,0 +1,17 @@
+export CLUSTER_NAME="{{ cookiecutter.working_kubernetes_cluster_name }}"
+export ZONES="{{ cookiecutter.aws_availability_zones }}"
+export VPC_ID="{{ cookiecutter.vpc_id }}"
+
+# the public key to be installed for the admin user
+# this should be set to be unique per cluster
+export SSH_KEY_PATH="$INFRASTRUCTURE_REPO/config/private/{{ cookiecutter.working_kube_key_name }}"
+
+export KUBERNETES_VERSION="{{ cookiecutter.kubernetes_version }}"
+
+export NODE_COUNT="{{ cookiecutter.kubernetes_node_count }}"
+export MASTER_ZONES="{{ cookiecutter.kubernetes_master_aws_zone }}"
+export DNS_ZONE="{{ cookiecutter.kubernetes_dns_zone }}"
+export MASTER_SIZE="{{ cookiecutter.kubernetes_master_node_type }}"
+export NODE_SIZE="{{ cookiecutter.kubernetes_worker_node_type }}"
+export V_LOG_LEVEL="{{ cookiecutter.kubernetes_v_log_level }}"
+export NETWORK_CIDR="{{ cookiecutter.kubernetes_network_cidr }}"

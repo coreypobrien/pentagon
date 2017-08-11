@@ -1,0 +1,8 @@
+vpc_tag_name: "{{ cookiecutter.vpc_name }}"
+org_name: "{{ cookiecutter.organization }}"
+{% raw -%}
+org: "{{ cookiecutter.organization_slug }}"
+{%- endraw %}
+canonical_zone: "{{ cookiecutter.organization_slug}}.com"
+vpn_bucket: "{{ cookiecutter.organization_slug }}-vpn"
+secrets_bucket: "{{ cookiecutter.organization_slug}}-secrets"

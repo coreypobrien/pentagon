@@ -36,8 +36,8 @@ module "vpc" {
 
 terraform {
   backend "s3" {
-    bucket = "{{ infrastructure_bucket }}"
-    key    = "{{ vpc_name }}/terraform-vpc/tf.state"
-    region = "{{ aws_region }}"
+    bucket = "{{ cookiecutter.infrastructure_bucket }}"
+    key    = "{{ cookiecutter.vpc_name }}/terraform-vpc/tf.state"
+    region = "{{ cookiecutter.aws_region }}"
   }
 }

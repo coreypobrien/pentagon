@@ -5,7 +5,7 @@
   gather_facts: False
 
   pre_tasks:
-    - include_vars: "{{ item }}"
+    - include_vars: {% raw %}"{{ item }}"{% endraw %}
       with_items:
         - ../../account/vars.yml
         - env.yml
@@ -20,7 +20,7 @@
   become_user: root
 
   pre_tasks:
-    - include_vars: "{{ item }}"
+    - include_vars: {% raw %}"{{ item }}"{% endraw %}
       with_items:
         - ../../account/vars.yml
         - env.yml
@@ -28,5 +28,5 @@
   roles:
     - role: Stouts.openvpn-master
       vpn_role: 'primary'
-      org: "{{ org_name }}"
-      openvpn_first_run: "{{ hostvars['localhost']['openvpn_first_run'] }}"
+      org: {% raw %}"{{ org_name }}"{% endraw %}
+      openvpn_first_run: {% raw %}"{{ hostvars['localhost']['openvpn_first_run'] }}"{% endraw %}

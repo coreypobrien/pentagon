@@ -1,9 +1,9 @@
-aws_vpc_name  = "{{ vpc_name }}"
-vpc_cidr_base = "{{ vpc_cidr_base }}"
-aws_azs = "{{ aws_availability_zones }}"
-az_count = "{{ aws_availability_zone_count }}"
+aws_vpc_name  = "{{ cookiecutter.vpc_name }}"
+vpc_cidr_base = "{{ cookiecutter.vpc_cidr_base }}"
+aws_azs = "{{ cookiecutter.aws_availability_zones }}"
+az_count = "{{ cookiecutter.aws_availability_zone_count }}"
 aws_inventory_path = "$INFRASTRUCTURE_REPO/plugins/inventory"
-aws_region = "{{ aws_region }}"
+aws_region = "{{ cookiecutter.aws_region }}"
 
 admin_subnet_parent_cidr = ".0.0/22"
 admin_subnet_cidrs = {
