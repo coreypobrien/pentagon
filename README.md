@@ -1,3 +1,10 @@
+Cookie Cutter Version!
+
+Try with
+
+`cookiecutter 'https://github.com/reactiveops/pentagon.git' -c pc/cookies`
+
+
 # Pentagon
 
 Pentagon is a framework for repeatable, containerized, cloud-based infrastructures (current state is beta). It defines the tools ([Ansible](https://www.ansible.com/), [Terraform](https://www.terraform.io/), [kops](https://github.com/kubernetes/kops)) used to manage the resources, as well as the directory structure of the infrastructure-as-code repository that manages those resources. It is designed to be customizable while at the same time built with defaults that fit the needs of most web application companies.
