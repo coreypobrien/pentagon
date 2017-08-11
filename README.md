@@ -19,7 +19,7 @@ Table Of Contents
 
 * [Requirements](docs/getting-started.md#requirements)
 * [Installation](docs/getting-started.md#installation)
-* [Quick Start Guide](docs/quick-start.md)
+* [Quick Start Guide](docs/getting-started.md)
 * [Advanced Usage](docs/getting-started.md)
   * [Simple](#simple-project-intialization)
   * [Advanced](#advanced-project-initialization)
