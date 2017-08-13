@@ -20,10 +20,10 @@ Table Of Contents
 * [Requirements](docs/getting-started.md#requirements)
 * [Installation](docs/getting-started.md#installation)
 * [Quick Start Guide](docs/getting-started.md)
-* [Advanced Usage](docs/getting-started.md)
-  * [Simple](#simple-project-intialization)
-  * [Advanced](#advanced-project-initialization)
-  * [Next Steps](/docs/next-steps.md)
+  * [VPC](docs/getting-started.md#vpc-setup)
+  * [VPN](docs/getting-started.md#vpn-setup)
+  * [KOPS](docs/getting-startd.md#kops)
+* [Advanced Usage](docs/getting-started.md#advanced-project-initialization)
 
 
 

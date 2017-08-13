@@ -6,6 +6,8 @@
 * git [Install Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
 * Terraform 0.9 [Install Terraform ](https://www.terraform.io/downloads.html)
 * Ansible [Install Ansible](http://docs.ansible.com/ansible/latest/intro_installation.html)
+* Kubectl [Install kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
+* Kops [Install Kops](https://github.com/kubernetes/kops#installing)
 
 ## Installation
 * `pip install -e git+https://github.com/reactiveops/pentagon.git#egg=pentagon`
@@ -44,11 +46,35 @@ This creates a AWS instance running [OpenVPN](https://openvpn.net/) [More](vpn.m
   * Currently may need to be run twice due to a race condition
 
 
+### KOPS Usage
+Pentagon used Kops to create clusters in AWS. The default layout creates two kubernetes clusters: `working` and `production`
+The steps to create each cluster are identical but the paths are slightly differnt. The cluster creation scirpts are located at `default/clusters/<production|working>/cluster-config/kops.sh` (See [Overview](overview.md) for a more comprehensive description of the directory layout).
+
+* From the directory for the cluster you wish to create (working or production) run `bash kops.sh` 
+  * this script creates the cluster.spec file for our default cluster. It does not create the cluster itself.
+* Use the `kops update cluster $CLUSTER_NAME` command to view and edit the `cluster.spec` and make the following edits
+  * Choose approriate CIDR ranges for your Kubernetes subnets (these subnest are separate from the subnets that were created in the [VPC](#vpc-setup) step) We typically reccomend fairly small subnets ie /22 or /24.
+  * For each of the subnets in the `cluster.spec` add an `egress: nat-05ee835341f099286` line to the yaml file. Through the AWS console, use the id of the nat-gateway associated with the `public_az` subnet (created above) in the same availability zone as the subnet in the `cluster.spec`
+* Save and exit
+* You may also wish to edit the instance group using the `kops edit $INSTANCE_GROUP` prior to cluster creation
+* `kops update cluster $CLUSTER_NAME`
+  * review the out put to ensure it matches the cluster you wish to create
+* `kops update cluster $CLUSTER_NAME --yes` will create the cluster
+* While waiting for the cluster to create, consult the [kops documentation](https://github.com/kubernetes/kops/blob/master/docs/README.md) for more information about using kops and interacting with your new cluster
+
+### Creating resources outside of Kubernetes
+
+Typically infrastructure will be required outside of your Kubernetes cluster. Other EC2 isntances or RDS instance or Elasticache instances etc are often require for an application.
+
+The directory structure of the project suggests that you use Ansible to create these resources and that the ansible playbooks can be save in the `default/resources/` direcotry or the `default/clusters/<cluster>/resoures/` directory depending on the scope the play book will be utilized. If the resoures is not specific to either cluster, then we suggest you save it at the `deault/resources/` level. Likewise, if it is a resources that will only be used by one cluster, such as a staging database or a production database, then we suggest writing the Ansible playbook at the `default/cluster/<cluster>/resources/` level. Writing ansible roles can be very helpful to DRY up your resource configurations.
 
 
 ======================================
 
 ## Advanced Project Initialization
+
+If you wish to utilize the templating ability of the `pentagon start-project` command, but need to modify the defaults, a comprehensive list of command line flags, listed below, should be able to customize the outout of the `pentagon start-project` command to your liking.
+
 
 ### Start new project
 * `pentagon start-project <project-name> <options>`

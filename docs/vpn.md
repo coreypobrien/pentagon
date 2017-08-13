@@ -8,9 +8,9 @@ This can be done before or after configuring and deploying your kubernetes clust
 * Ensure `config/local/ssh_config` has the key path and subnets set for ssh access
 * In `default/resources/admin-environment/env.yml` verify the following are set properly
   - `aws_key_name` : name of the key pair created earlier
-  - `default_ami` : If not preset, se the [Ubuntu AMI locator](https://cloud-images.ubuntu.com/locator/). Ubuntu trusty as of this writing. Make sure it is located in correct region, instance type: `hvm:ebs-ssd`.  if needed.
+  - `default_ami` : If not preset, se the [Ubuntu AMI locator](https://cloud-images.ubuntu.com/locator/). Use Ubuntu Trusty and make sure it is located in correct region, instance type: `hvm:ebs-ssd`.
   - Edit other variables as needed. VPN users to be created, aka VPN clients, are contained in the Ansible array, `openvpn_clients`
-* If you haven't already, in the `$INFRASTRUCTURE_REPO` directory, install ansible requirements:
+* If you haven't already, in the project directory, install ansible requirements:
 
 ```
 ansible-galaxy install -r ansible-requirements.yml
