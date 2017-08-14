@@ -443,7 +443,11 @@ class PentagonProject():
                 logging.info("Getting VPN ami-id from AWS")
 
                 try:
-                    client = boto3.client('ec2', aws_access_key_id=self._aws_access_key,  aws_secret_access_key=self._aws_secret_key)
+                    client = boto3.client('ec2',
+                                          aws_access_key_id=self._aws_access_key,
+                                          aws_secret_access_key=self._aws_secret_key,
+                                          region_name=self._aws_default_region
+                                          )
                     images = client.describe_images(Owners=self._ami_owners, Filters=self._vpn_ami_filters)
                     self._vpn_ami_id = images['Images'][-1]['ImageId']
                 except Exception, e:

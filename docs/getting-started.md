@@ -43,7 +43,9 @@ This creates a AWS instance running [OpenVPN](https://openvpn.net/) [More](vpn.m
 * edit `../../account/vars.yml` to make sure the values are corect
   * Cannonical zone must be a route53 zone you have access to create records in or the vpn creation will fail.
 * `ansible-playbook vpn.yml`
-  * Currently may need to be run twice due to a race condition
+  * _This will fail on the first run_
+  * Copy the IP-address of the instance created and add it to the list of hosts `# for instances in admin` section of the `default/config/private/ssh_config` file. 
+* Run it again: `ansible-playbook vpn.yml` 
 
 
 ### KOPS Usage
