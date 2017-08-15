@@ -5,7 +5,7 @@
 # two separate files are supported, config vars and secret vars, sourced from separate files
 # requires shyaml from https://github.com/0k/shyaml
 
-LOCAL_CONFIG_DIR=$(pwd)/$(dirname ${BASH_SOURCE[0]})
+LOCAL_CONFIG_DIR=$(dirname ${BASH_SOURCE[0]})
 
 PATH_TO_CONFIG_VARS="${LOCAL_CONFIG_DIR}/vars.yml"
 PATH_TO_SECRET_VARS="${LOCAL_CONFIG_DIR}/../private/secrets.yml"

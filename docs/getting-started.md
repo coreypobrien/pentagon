@@ -4,7 +4,7 @@
 * python2 >= 2.7 [Install Python](https://www.python.org/downloads/)
 * pip [Install Pip](https://pip.pypa.io/en/stable/installing/)
 * git [Install Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
-* Terraform >=0.9 [Install Terraform ](https://www.terraform.io/downloads.html) 
+* Terraform >=0.9 [Install Terraform ](https://www.terraform.io/downloads.html)
 * Ansible [Install Ansible](http://docs.ansible.com/ansible/latest/intro_installation.html)
 * Kubectl [Install kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
 * Kops [Install Kops](https://github.com/kubernetes/kops#installing)
@@ -16,53 +16,58 @@
   * Not necessary, but we suggest installing Pentagon into a [VirtualEnv](https://virtualenv.pypa.io/en/stable/)
 
 ## Quick Start
-### Start Project
+### Create a pentagon project
 * `pentagon start-project <project-name> --aws-access-key <aws-access-key> --aws-secret-key <aws-secret-key> --aws-default-region <aws-default-region>`
   * With the above basic options set, all defaults will be set for you and unless values need to be updated, you should be able to run terraform after creating the S3 Bucket to store state (`infrastructure-bucket`).
   * Arguments may also be set using environment variable in the format `PENTAGON_<argument_name_with_underscores>`.
-* `cd <project-name>-infrastructure
+* `cd <project-name>-infrastructure`
 * `pip install -r requirements.txt`
 * `source config/local/env-vars.sh`
   * sources environment variables required for the further steps. This wil be required each time you work with the infrastructure repository or if you move the repository to another location.
-* `bash config/local/config/init`
+* `bash config/local/local-config-init`
 
-### VPC Setup
-This creates a VPC and private, public, and admin subnets in that VPC for non Kubernetes resources. [More](network.md)
+### Create a VPC
+This creates a VPC and private, public, and admin subnets in that VPC for non Kubernetes resources. Read more about networking [here](network.md).
 * `cd default/vpc`
-* Verify that `terraform.tfvars` has valid values
-  * in some cases, the programatically determined AWS availablity zones may not exist
+* Edit `terraform.tfvars`and verify the generated `aws_azs` actually exist in `aws_region`
 * `make all`
+* In `default/clusters/*/vars.sh`, set `VPC_ID` using the newly created VPC ID. You can find that ID in Terraform output or using the AWS web console.
 
+### Configure DNS and Route53
+If you don't already have a Route53 Hosted Zone configured, do that now.
+* Create a Route53 Hosted Zone (e.g. `pentagon.mycompany.com`)
+* In `default/account/vars.yml` set `canonical_zone` to match your Hosted Zone
+* In `default/clusters/*/vars.sh`
+  * Set `CLUSTER_NAME` to a hostname that ends with your hosted zone (e.g. `working-1.pentagon.mycompany.com`)
+  * Set `DNS_ZONE` to your Hosted Zone (e.g. `pentagon.mycompany.com`)
 
-### VPN Setup
-This creates a AWS instance running [OpenVPN](https://openvpn.net/) [More](vpn.md) 
+### Setup a VPN
+This creates a AWS instance running [OpenVPN](https://openvpn.net/). Read more about the VPN [here](vpn.md).
 * From the root of your project run `ansible-galaxy install -r ansible-requirements.yml`
 * `cd default/resources/admin-environment`
-* edit `env.yml` and update any values. 
-  * Make sure to add the user names of those you want to be able to access the VPN. You can add more later
-* edit `../../account/vars.yml` to make sure the values are corect
-  * Cannonical zone must be a route53 zone you have access to create records in or the vpn creation will fail.
-* `ansible-playbook vpn.yml`
-  * _This will fail on the first run_
-  * Copy the IP-address of the instance created and add it to the list of hosts `# for instances in admin` section of the `default/config/private/ssh_config` file. 
-* Run it again: `ansible-playbook vpn.yml` 
+* In `env.yml`, set the list of user names that should have access to the VPN under `openvpn_clients`. You can add more later.
+* Run Ansible a few times
+  * Run `ansible-playbook vpn.yml` until it fails on `VPN security groups`
+  * Run `ansible-playbook vpn.yml` until it fails `Gathering Facts` after you agree to trust the SSH key for the host.
+  * Edit `config/private/ssh_config` and add the IP address from the SSH key prompt to the `# for instances in admin` section.
+  * Run `ansible-playbook vpn.yml` one last time and it will succeed.
 
+### Create a Kubernetes cluster
+Pentagon used Kops to create clusters in AWS. The default layout creates configurations for two kubernetes clusters: `working` and `production`. See [Overview](overview.md) for a more comprehensive description of the directory layout.
 
-### KOPS Usage
-Pentagon used Kops to create clusters in AWS. The default layout creates two kubernetes clusters: `working` and `production`
-The steps to create each cluster are identical but the paths are slightly differnt. The cluster creation scirpts are located at `default/clusters/<production|working>/cluster-config/kops.sh` (See [Overview](overview.md) for a more comprehensive description of the directory layout).
-
-* From the directory for the cluster you wish to create (working or production) run `bash kops.sh` 
-  * this script creates the cluster.spec file for our default cluster. It does not create the cluster itself.
-* Use the `kops update cluster $CLUSTER_NAME` command to view and edit the `cluster.spec` and make the following edits
-  * Choose approriate CIDR ranges for your Kubernetes subnets (these subnest are separate from the subnets that were created in the [VPC](#vpc-setup) step) We typically reccomend fairly small subnets ie /22 or /24.
-  * For each of the subnets in the `cluster.spec` add an `egress: nat-05ee835341f099286` line to the yaml file. Through the AWS console, use the id of the nat-gateway associated with the `public_az` subnet (created above) in the same availability zone as the subnet in the `cluster.spec`
-* Save and exit
-* You may also wish to edit the instance group using the `kops edit $INSTANCE_GROUP` prior to cluster creation
-* `kops update cluster $CLUSTER_NAME`
-  * review the out put to ensure it matches the cluster you wish to create
-* `source ../vars.sh && source ../../../account/vars.sh` to set the environment variables for the cluster you're working on
-* `kops update cluster $CLUSTER_NAME --yes` will create the cluster
+* Make sure your KOPS variables are set correctly with `source default/account/vars.sh`
+* Move into to the path for the cluster you want to work on with `cd default/clusters/<production|working>`
+* Run `bash cluster-config/kops.sh` to create a cluster.spec file for this cluster. This does not create any resources in AWS.
+* Use [kops](https://github.com/kubernetes/kops/blob/master/docs/cli/kops.md) to manage the cluster.
+  * Run `kops edit cluster <clustername>` to view and edit the `cluster.spec` and make the following edits
+    * Choose approriate CIDR ranges for your Kubernetes subnets. That don't conflict with the subnets that were created in the [VPC](#vpc-setup) step. We typically reccomend fairly small subnets ie /22 or /24.
+    * Using the AWS console, find the `NAT Gateways` section of the `VPC Dashboard`. Note the `NAT Gateway ID`s for each of your AZs. For each of the `Private` subnets in the `cluster.spec` add an `egress: <nat-id>` line where `nat-id` is the `NAT Gateway ID` corresponding to the same AZ as the `Private` subnet.
+    * Save and exit
+  * You may also wish to edit the instance groups prior to cluster creation:
+    * `kops get instancegroups --name <clustername>` to list them (one master group per AZ and one node group)
+    * `kops edit instancegroups --name <clustername> <instancegroupname>` to edit any of them
+* Run `kops update cluster <clustername>` and review the out put to ensure it matches the cluster you wish to create
+* Run `kops update cluster <clustername> --yes` to create the cluster
 * While waiting for the cluster to create, consult the [kops documentation](https://github.com/kubernetes/kops/blob/master/docs/README.md) for more information about using kops and interacting with your new cluster
 
 ### Creating resources outside of Kubernetes
@@ -229,4 +234,3 @@ If you wish to utilize the templating ability of the `pentagon start-project` co
     * Defaults to INFO
   * **--help**:
     * Show help message and exit.
-
