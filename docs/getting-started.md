@@ -1,10 +1,10 @@
 # Getting Started with Pentagon
 
 ## Requirements
-* python >= 2.7 [Install Python](https://www.python.org/downloads/)
+* python2 >= 2.7 [Install Python](https://www.python.org/downloads/)
 * pip [Install Pip](https://pip.pypa.io/en/stable/installing/)
 * git [Install Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
-* Terraform 0.9 [Install Terraform ](https://www.terraform.io/downloads.html)
+* Terraform >=0.9 [Install Terraform ](https://www.terraform.io/downloads.html) 
 * Ansible [Install Ansible](http://docs.ansible.com/ansible/latest/intro_installation.html)
 * Kubectl [Install kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
 * Kops [Install Kops](https://github.com/kubernetes/kops#installing)
@@ -61,6 +61,7 @@ The steps to create each cluster are identical but the paths are slightly differ
 * You may also wish to edit the instance group using the `kops edit $INSTANCE_GROUP` prior to cluster creation
 * `kops update cluster $CLUSTER_NAME`
   * review the out put to ensure it matches the cluster you wish to create
+* `source ../vars.sh && source ../../../account/vars.sh` to set the environment variables for the cluster you're working on
 * `kops update cluster $CLUSTER_NAME --yes` will create the cluster
 * While waiting for the cluster to create, consult the [kops documentation](https://github.com/kubernetes/kops/blob/master/docs/README.md) for more information about using kops and interacting with your new cluster
 
